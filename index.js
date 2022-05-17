@@ -4,13 +4,15 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const path = require("path");
+const AppError = require("./util/appError");
+const globalErrorHandler = require("./controller/errorController");
 // Import Routers
 const userRouter = require("./routes/userRoutes");
 
 // Create Express Application
 const app = express();
 // Configure .env to process.env
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./.env" });
 // Connection to Database (MongoDB)
 const DATABASE = process.env.DATABASE_URL.replace(
   "<password>",
@@ -22,7 +24,7 @@ mongoose
     useUnifiedTopology: true,
     autoIndex: true,
   })
-  .then((con) => console.log("Connected to MongoDB..."))
+  .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.log(err));
 // Body parser for json file
 app.use(express.json({ limit: "10kb" }));
@@ -34,6 +36,13 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.static(path.join(__dirname, "public")));
 // Mounting Router for different routes
 app.use("/api/v1/users", userRouter);
+// Implementing Global Error Handling
+app.all("*", (req, res, next) => {
+  next(
+    new AppError(`Cannot find this ${req.originalUrl} url in the server!`, 404)
+  );
+});
+app.use(globalErrorHandler);
 app.listen("5000", () => {
   console.log("App is running on port 5000...");
 });
