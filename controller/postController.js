@@ -34,7 +34,7 @@ exports.createPost = async (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);
-    console.log(post);
+
     if (!post) return next(new AppError("No post found!", 404));
     if (post.username === req.body.username) {
       try {

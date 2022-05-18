@@ -32,6 +32,10 @@ app.use(express.json({ limit: "10kb" }));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+// TEST Middleware
+// app.use("/", (req, res, next) => {
+//   console.log(req.headers);
+// });
 // Serving STATIC Files
 app.use(express.static(path.join(__dirname, "public")));
 // MOUNTING ROUTER for different routes
