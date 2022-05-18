@@ -8,7 +8,7 @@ const AppError = require("./util/appError");
 const globalErrorHandler = require("./controller/errorController");
 // Import Routers
 const userRouter = require("./routes/userRoutes");
-
+const postRouter = require("./routes/postRouter");
 // Create Express Application
 const app = express();
 // Configure .env to process.env
@@ -32,10 +32,11 @@ app.use(express.json({ limit: "10kb" }));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-// Serving Static Files
+// Serving STATIC Files
 app.use(express.static(path.join(__dirname, "public")));
-// Mounting Router for different routes
+// MOUNTING ROUTER for different routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/posts", postRouter);
 // Implementing Global Error Handling
 app.all("*", (req, res, next) => {
   next(
