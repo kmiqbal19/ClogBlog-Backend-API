@@ -26,3 +26,7 @@ router.patch(
 router.route("/").get(usersController.getUsers);
 router.route("/:id").get(usersController.getUser);
 module.exports = router;
+// UPDATE USER DATA
+router
+  .route("/updateMe")
+  .patch(authController.protect, usersController.updateMe);
