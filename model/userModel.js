@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,13 +27,14 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please confirm the correct password"],
       validate: {
         validator: function(el) {
-          console.log(el);
           return el === this.password;
         },
         message: "Passwords are not equal",
       },
     },
     passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date,
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -46,6 +48,8 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 // PRE SAVE MIDDLEWARE FROM MONGOOSE [Doesn't work on arrow functions, because the this. is undefined there]
+
+// 1)
 userSchema.pre("save", async function(next) {
   // Only run this func , if the password is actually modified
   if (!this.isModified("password")) return next();
@@ -73,7 +77,18 @@ userSchema.methods.isPasswordChanged = function(JWTTimestamp) {
     );
     return changedTimestamp > JWTTimestamp;
   }
+  // False means password not changed
   return false;
+};
+// 3)
+userSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 const User = mongoose.model("User", userSchema);
 module.exports = User;
