@@ -49,7 +49,7 @@ exports.protect = async (req, res, next) => {
       );
     }
     // GRANT ACCESS to protected routes
-    req.user = currentUser;
+    req.user = currentUser; // This user will be helpful for next middleware
 
     next();
   } catch (err) {
@@ -150,6 +150,38 @@ exports.resetPassword = async (req, res, next) => {
     // SAVE the user
     await user.save();
     // Log the user in, send JWT
+    const token = createJWT(user._id);
+    // Remove the password from the output
+    user.password = undefined;
+    res.status(200).json({
+      status: "success",
+      token,
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateMyPassword = async function(req, res, next) {
+  try {
+    // Get user from collection
+
+    const user = await User.findById(req.user.id).select("+password");
+    // Check if posted current password is correct
+
+    if (!(await user.checkPassword(req.body.currentPassword, user.password))) {
+      return next(new AppError("Your current password is wrong!", 401));
+    }
+    // If so, UPDATE the password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    // Log in the user and send JWT
     const token = createJWT(user._id);
     // Remove the password from the output
     user.password = undefined;
