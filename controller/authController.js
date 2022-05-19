@@ -10,6 +10,29 @@ const createJWT = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+// Create and Send Cookies and JWT Token
+const sendCookieWithToken = (user, statusCode, res) => {
+  const token = createJWT(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = true;
+  }
+  res.cookie("jwt", token, cookieOptions);
+  // Remove password from output
+  user.password = undefined;
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
 // PROTECT MIDDLEWARE FOR ROUTES
 exports.protect = async (req, res, next) => {
   try {
@@ -60,15 +83,8 @@ exports.protect = async (req, res, next) => {
 exports.signup = async (req, res, next) => {
   try {
     const newUser = await User.create(req.body);
-    const token = createJWT(newUser._id);
-
-    res.status(200).json({
-      status: "success",
-      token,
-      data: {
-        user: newUser,
-      },
-    });
+    // Send Cookie and Token
+    sendCookieWithToken(newUser, 201, res);
   } catch (err) {
     next(err);
   }
@@ -89,12 +105,7 @@ exports.login = async (req, res, next) => {
       return next(new AppError("Incorrect email or Password", 401));
     }
     // If everything is Successful we send a new jwt token for this user
-    const token = createJWT(user._id);
-    res.status(200).json({
-      status: "success",
-      message: "You are successfully logged in to your account.",
-      token,
-    });
+    sendCookieWithToken(user, 200, res);
   } catch (err) {
     next(err);
   }
@@ -150,16 +161,7 @@ exports.resetPassword = async (req, res, next) => {
     // SAVE the user
     await user.save();
     // Log the user in, send JWT
-    const token = createJWT(user._id);
-    // Remove the password from the output
-    user.password = undefined;
-    res.status(200).json({
-      status: "success",
-      token,
-      data: {
-        user,
-      },
-    });
+    sendCookieWithToken(user, 200, res);
   } catch (err) {
     next(err);
   }
@@ -182,16 +184,7 @@ exports.updateMyPassword = async function(req, res, next) {
     await user.save();
 
     // Log in the user and send JWT
-    const token = createJWT(user._id);
-    // Remove the password from the output
-    user.password = undefined;
-    res.status(200).json({
-      status: "success",
-      token,
-      data: {
-        user,
-      },
-    });
+    sendCookieWithToken(user, 200, res);
   } catch (err) {
     next(err);
   }

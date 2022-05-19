@@ -4,6 +4,12 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const path = require("path");
+const rateLimiter = require("express-rate-limit");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
+// Import FILES
 const AppError = require("./util/appError");
 const globalErrorHandler = require("./controller/errorController");
 // Import Routers
@@ -28,6 +34,25 @@ mongoose
   .catch((err) => console.log(err));
 // Body parser for json file
 app.use(express.json({ limit: "10kb" }));
+// Limit request rate
+const limiter = rateLimiter({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request in this API, Please try again in one hour.",
+});
+app.use("/api", limiter);
+// Set security HTTP headers
+app.use(helmet());
+// Data sanitization against NOSQL query Injection
+app.use(mongoSanitize());
+// Data sanitization
+app.use(xss());
+// Preventing parameter pollution
+app.use(
+  hpp({
+    // whitelist: "duration",
+  })
+);
 // Logging http request method in console
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
