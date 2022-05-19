@@ -70,3 +70,17 @@ exports.updateMe = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deactivateMe = async (req, res, next) => {
+  try {
+    // Find the user and turn the active property to false
+    await User.findByIdAndUpdate(req.user.id, { active: false });
+    res.status(204).json({
+      status: "success",
+      data: null,
+      message: "Your account has been successfully deactivated!",
+    });
+  } catch (err) {
+    next(err);
+  }
+};

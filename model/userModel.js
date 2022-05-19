@@ -44,6 +44,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "default.jpg",
     },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
   },
   { timestamps: true }
 );
@@ -63,6 +68,13 @@ userSchema.pre("save", async function(next) {
   }
   next();
 });
+// 2)
+userSchema.pre(/^find/, function(next) {
+  // 'this' points to the current query
+  this.find({ active: { $ne: false } });
+  next();
+});
+
 // Creating SCHEMA METHODS
 // 1)
 userSchema.methods.checkPassword = async function(givenPass, actualPass) {

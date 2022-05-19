@@ -30,3 +30,10 @@ module.exports = router;
 router
   .route("/updateMe")
   .patch(authController.protect, usersController.updateMe);
+// DELETE USER
+
+router.patch(
+  "/deactivateMe",
+  authController.protect,
+  usersController.deactivateMe
+);
