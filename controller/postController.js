@@ -4,11 +4,34 @@ const AppError = require("../util/appError");
 // GET ALL POSTS
 exports.getPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find();
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+    const category = req.query.cat;
+    const posts = await Post.find(
+      category ? { categories: { $in: category } } : queryObj
+    );
     res.status(200).json({
       status: "success",
       data: {
         posts,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+// GET SINGLE POST
+exports.getSinglePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return next(new AppError("There is no post with this ID", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        post,
       },
     });
   } catch (err) {

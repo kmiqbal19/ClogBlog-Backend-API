@@ -42,7 +42,11 @@ const limiter = rateLimiter({
 });
 app.use("/api", limiter);
 // Set security HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 // Data sanitization against NOSQL query Injection
 app.use(mongoSanitize());
 // Data sanitization
@@ -62,7 +66,7 @@ if (process.env.NODE_ENV === "development") {
 //   console.log(req.headers);
 // });
 // Serving STATIC Files
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public/images")));
 // MOUNTING ROUTER for different routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/posts", postRouter);
@@ -73,6 +77,6 @@ app.all("*", (req, res, next) => {
   );
 });
 app.use(globalErrorHandler);
-app.listen("5000", () => {
+app.listen(process.env.PORT || "5000", () => {
   console.log("App is running on port 5000...");
 });
