@@ -5,12 +5,22 @@ const AppError = require("../util/appError");
 exports.getPosts = async (req, res, next) => {
   try {
     const queryObj = { ...req.query };
-    const excludedFields = ["page", "sort", "limit", "fields"];
-    excludedFields.forEach((el) => delete queryObj[el]);
-    const category = req.query.cat;
-    const posts = await Post.find(
-      category ? { categories: { $in: category } } : queryObj
-    );
+    // const excludedFields = ["page", "sort", "limit", "fields"];
+    // excludedFields.forEach((el) => delete queryObj[el]);
+    let posts;
+    const category = queryObj.cat;
+    const { search } = queryObj;
+    if (category) {
+      posts = await Post.find({ categories: { $in: category } });
+    } else if (search) {
+      posts = await Post.find({
+        title: { $regex: search, $options: "i" },
+        username: { $regex: search, $options: "i" },
+        // description: { $regex: search, $options: "i" },
+      });
+    } else {
+      posts = await Post.find(queryObj);
+    }
     res.status(200).json({
       status: "success",
       data: {

@@ -36,7 +36,7 @@ mongoose
 app.use(express.json({ limit: "10kb" }));
 // Limit request rate
 const limiter = rateLimiter({
-  max: 100,
+  max: 1000,
   windowMs: 60 * 60 * 1000,
   message: "Too many request in this API, Please try again in one hour.",
 });
