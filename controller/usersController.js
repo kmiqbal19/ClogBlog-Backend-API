@@ -11,7 +11,8 @@ const filteredObj = (obj, ...allowedItems) => {
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const queryObj = { ...req.query };
+    const users = await User.find(queryObj);
     res.status(200).json({
       status: "success",
       count: users.length,
