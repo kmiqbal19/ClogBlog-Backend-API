@@ -15,7 +15,7 @@ exports.getPosts = async (req, res, next) => {
     } else if (search) {
       posts = await Post.find({
         title: { $regex: search, $options: "i" },
-        username: { $regex: search, $options: "i" },
+        // username: { $regex: search, $options: "i" },
         // description: { $regex: search, $options: "i" },
       });
     } else {

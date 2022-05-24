@@ -69,9 +69,17 @@ if (process.env.NODE_ENV === "development") {
 
 // USING MULTER FOR IMAGE UPLOAD
 
-const storage = multer.diskStorage({
+const storagePosts = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images/posts");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
+const storageUsers = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/users");
   },
   filename: (req, file, cb) => {
     cb(null, req.body.name);
@@ -84,12 +92,19 @@ const multerFilter = (req, file, cb) => {
     cb(new AppError("Only Images can be uploaded!", 400), false);
   }
 };
-const upload = multer({
-  storage: storage,
+const uploadPost = multer({
+  storage: storagePosts,
+  fileFilter: multerFilter,
+});
+const uploadUser = multer({
+  storage: storageUsers,
   fileFilter: multerFilter,
 });
 
-app.post("/api/v1/posts/upload", upload.single("file"), (req, res) => {
+app.post("/api/v1/posts/upload", uploadPost.single("file"), (req, res) => {
+  res.status(200).json("File has been uploaded");
+});
+app.post("/api/v1/users/upload", uploadUser.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });
 // Serving STATIC Files

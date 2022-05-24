@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "A username must be provided!"],
     },
+    fullname: {
+      type: String,
+      required: [true, "A full name must be provided!"],
+    },
     email: {
       type: String,
       required: [true, "A email must be provided"],
@@ -42,7 +46,7 @@ const userSchema = new mongoose.Schema(
     },
     photo: {
       type: String,
-      default: "users/default.jpg",
+      default: "default.jpg",
     },
     active: {
       type: Boolean,

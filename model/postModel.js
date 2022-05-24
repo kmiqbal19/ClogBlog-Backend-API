@@ -17,11 +17,12 @@ const postSchema = new mongoose.Schema(
     photo: {
       type: String,
       required: false,
+      default: "default.jpg",
     },
     categories: {
       type: Array,
       required: false,
-      default: ["life"],
+      default: ["anything"],
     },
   },
   { timestamps: true }

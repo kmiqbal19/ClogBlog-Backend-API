@@ -50,11 +50,19 @@ exports.updateMe = async (req, res, next) => {
     }
     // Filtered out unwanted fields that are not allowed to be updated
 
-    const filteredBody = filteredObj(req.body, "username", "email");
+    const filteredBody = filteredObj(
+      req.body,
+      "username",
+      "email",
+      "fullname",
+      "photo"
+    );
     // Update user document
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      // req.user.id will be used when protect will be used
+      // req.user.id,
+      req.body.id,
       filteredBody,
       {
         new: true,
