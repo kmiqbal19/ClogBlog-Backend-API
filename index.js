@@ -9,6 +9,7 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const multer = require("multer");
 // Import FILES
 const AppError = require("./util/appError");
 const globalErrorHandler = require("./controller/errorController");
@@ -65,6 +66,24 @@ if (process.env.NODE_ENV === "development") {
 // app.use("/", (req, res, next) => {
 //   console.log(req.headers);
 // });
+
+// USING MULTER FOR IMAGE UPLOAD
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/posts");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
+const upload = multer({
+  storage: storage,
+});
+
+app.post("/api/v1/posts/upload", upload.single("file"), (req, res) => {
+  res.status(200).json("File has been uploaded");
+});
 // Serving STATIC Files
 app.use(express.static(path.join(__dirname, "public/images")));
 // MOUNTING ROUTER for different routes
