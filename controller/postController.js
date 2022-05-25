@@ -22,16 +22,19 @@ exports.getPosts = async (req, res, next) => {
         .limit(ITEMS_PER_PAGE)
         .skip(skip);
     } else if (search) {
-      count = await Post.find({
-        title: { $regex: search, $options: "i" },
-      }).length;
+      const promise = Post.find({ title: { $regex: search, $options: "i" } });
+      count = (await promise).length;
       posts = await Post.find({
         title: { $regex: search, $options: "i" },
       })
         .limit(ITEMS_PER_PAGE)
         .skip(skip);
+      // count = await Post.find({
+      //   title: { $regex: search, $options: "i" },
+      // }).length;
+      // console.log(count);
     } else {
-      count = await Post.find({ queryObj });
+      count = await (await Post.find({ queryObj })).length;
       posts = await Post.find(queryObj)
         .limit(ITEMS_PER_PAGE)
         .skip(skip);
