@@ -3,26 +3,43 @@ const AppError = require("../util/appError");
 
 // GET ALL POSTS
 exports.getPosts = async (req, res, next) => {
+  const ITEMS_PER_PAGE = 3;
+  const page = req.query.page || 1;
+  const skip = (page - 1) * ITEMS_PER_PAGE;
   try {
     const queryObj = { ...req.query };
     // const excludedFields = ["page", "sort", "limit", "fields"];
     // excludedFields.forEach((el) => delete queryObj[el]);
+
     let posts;
     const category = queryObj.cat;
     const { search } = queryObj;
+    const count = await Post.estimatedDocumentCount({});
+    const pageCount = Math.trunc(count / ITEMS_PER_PAGE) + 1;
     if (category) {
-      posts = await Post.find({ categories: { $in: category } });
+      posts = await Post.find({ categories: { $in: category } })
+        .limit(ITEMS_PER_PAGE)
+        .skip(skip);
     } else if (search) {
       posts = await Post.find({
         title: { $regex: search, $options: "i" },
         // username: { $regex: search, $options: "i" },
         // description: { $regex: search, $options: "i" },
-      });
+      })
+        .limit(ITEMS_PER_PAGE)
+        .skip(skip);
     } else {
-      posts = await Post.find(queryObj);
+      posts = await Post.find(queryObj)
+        .limit(ITEMS_PER_PAGE)
+        .skip(skip);
     }
     res.status(200).json({
       status: "success",
+      documents: posts.length,
+      pagination: {
+        count,
+        pageCount,
+      },
       data: {
         posts,
       },
