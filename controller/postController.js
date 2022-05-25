@@ -12,27 +12,35 @@ exports.getPosts = async (req, res, next) => {
     // excludedFields.forEach((el) => delete queryObj[el]);
 
     let posts;
+    let count = 0;
     const category = queryObj.cat;
     const { search } = queryObj;
-    const count = await Post.estimatedDocumentCount({});
-    const pageCount = Math.trunc(count / ITEMS_PER_PAGE) + 1;
+
     if (category) {
+      count = await (await Post.find({ categories: { $in: category } })).length;
       posts = await Post.find({ categories: { $in: category } })
         .limit(ITEMS_PER_PAGE)
         .skip(skip);
     } else if (search) {
+      count = await Post.find({
+        title: { $regex: search, $options: "i" },
+      }).length;
       posts = await Post.find({
         title: { $regex: search, $options: "i" },
-        // username: { $regex: search, $options: "i" },
-        // description: { $regex: search, $options: "i" },
       })
         .limit(ITEMS_PER_PAGE)
         .skip(skip);
     } else {
+      count = await Post.find({ queryObj });
       posts = await Post.find(queryObj)
         .limit(ITEMS_PER_PAGE)
         .skip(skip);
     }
+    const pageCount =
+      count % ITEMS_PER_PAGE > 0
+        ? Math.trunc(count / ITEMS_PER_PAGE) + 1
+        : count / ITEMS_PER_PAGE;
+
     res.status(200).json({
       status: "success",
       documents: posts.length,
