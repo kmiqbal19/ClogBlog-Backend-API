@@ -18,7 +18,7 @@ router.route("/resetPassword/:resetToken").patch(authController.resetPassword);
 // UPDATE EXISTING PASSWORD
 router.patch(
   "/updateMyPassword",
-  authController.protect,
+  // authController.protect,
   authController.updateMyPassword
 );
 //****************OTHERS*******************

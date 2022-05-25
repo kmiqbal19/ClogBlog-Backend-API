@@ -170,8 +170,9 @@ exports.resetPassword = async (req, res, next) => {
 exports.updateMyPassword = async function(req, res, next) {
   try {
     // Get user from collection
-
-    const user = await User.findById(req.user.id).select("+password");
+    // Use next line when we will use protect
+    // const user = await User.findById(req.user.id).select("+password");
+    const user = await User.findById(req.body.id).select("+password");
     // Check if posted current password is correct
 
     if (!(await user.checkPassword(req.body.currentPassword, user.password))) {
