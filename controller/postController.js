@@ -3,7 +3,7 @@ const AppError = require("../util/appError");
 
 // GET ALL POSTS
 exports.getPosts = async (req, res, next) => {
-  const ITEMS_PER_PAGE = 3;
+  const ITEMS_PER_PAGE = 8;
   const page = req.query.page || 1;
   const skip = (page - 1) * ITEMS_PER_PAGE;
   try {
