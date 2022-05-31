@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "build": "CI= npm run build",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "start": "node index.js"
   },
   "author": "K M Iqbal",
   "license": "ISC",
