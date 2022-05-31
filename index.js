@@ -25,9 +25,9 @@ dotenv.config({ path: "./.env" });
 //   "<password>",
 //   process.env.DB_PASSWORD
 // );
-const DATABASE = process.env.DATABASE_URL;
+// const DATABASE = process.env.DATABASE_URL;
 mongoose
-  .connect(DATABASE, {
+  .connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     autoIndex: true,

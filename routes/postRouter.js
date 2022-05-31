@@ -1,6 +1,6 @@
 const express = require("express");
 const postsController = require("../controller/postController");
-const authController = require("../controller/authController");
+// const authController = require("../controller/authController");
 
 const router = express.Router();
 router.get("/", postsController.getPosts);
