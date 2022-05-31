@@ -21,10 +21,11 @@ const app = express();
 // Configure .env to process.env
 dotenv.config({ path: "./.env" });
 // Connection to Database (MongoDB)
-const DATABASE = process.env.DATABASE_URL.replace(
-  "<password>",
-  process.env.DB_PASSWORD
-);
+// const DATABASE = process.env.DATABASE_URL.replace(
+//   "<password>",
+//   process.env.DB_PASSWORD
+// );
+const DATABASE = process.env.DATABASE_URL;
 mongoose
   .connect(DATABASE, {
     useNewUrlParser: true,
@@ -119,6 +120,12 @@ app.all("*", (req, res, next) => {
   );
 });
 app.use(globalErrorHandler);
+// FOR DEPLOYMENT
+app.use(express.static(path.join(__dirname, "/client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/client/build", "index.html"));
+});
 app.listen(process.env.PORT || "5000", () => {
   console.log("App is running on port 5000...");
 });
