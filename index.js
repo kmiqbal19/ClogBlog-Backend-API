@@ -126,9 +126,9 @@ app.use(express.static(path.join(__dirname, "/client/build")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "/client/build", "index.html"));
 });
-// app.get("/", (req, res) => {
-//   res.json("Backend is running!");
-// });
+app.get("/", (req, res) => {
+  res.status(200).json("Backend is running!");
+});
 app.listen(process.env.PORT || "5000", () => {
   console.log("App is running on port 5000...");
 });
