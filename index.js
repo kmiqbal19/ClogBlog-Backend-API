@@ -18,11 +18,11 @@ const globalErrorHandler = require("./controller/errorController");
 const userRouter = require("./routes/userRoutes");
 const postRouter = require("./routes/postRouter");
 // Create Express Application
-const app = express();
+const app = express().use(cors());
 // Configure .env to process.env
 dotenv.config({ path: "./.env" });
-// CORS
-app.use(cors({ credentials: true, optionsSuccessStatus: true }));
+// // CORS
+// app.use(cors({ credentials: true, optionsSuccessStatus: true }));
 // Connection to Database (MongoDB)
 // const DATABASE = process.env.DATABASE_URL.replace(
 //   "<password>",
@@ -135,6 +135,14 @@ app.use(globalErrorHandler);
 // } else {
 // }
 app.get("/", (req, res) => {
+  // res.setHeader("Access-Control-Allow-Origin", "*");
+  // res.setHeader("Access-Control-Allow-Credentials", "true");
+  // res.setHeader("Access-Control-Max-Age", "1800");
+  // res.setHeader("Access-Control-Allow-Headers", "content-type");
+  // res.setHeader(
+  //   "Access-Control-Allow-Methods",
+  //   "PUT, POST, GET, DELETE, PATCH, OPTIONS"
+  // );
   res.send("Backend is running!");
 });
 
