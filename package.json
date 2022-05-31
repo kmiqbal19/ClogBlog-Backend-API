@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "CI= npm run build",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "author": "K M Iqbal",
@@ -39,6 +40,7 @@
     "prettier": "^1.17.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "14.17.0",
+    "npm": "6.14.13"
   }
 }
