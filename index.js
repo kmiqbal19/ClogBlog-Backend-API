@@ -114,21 +114,27 @@ app.use(express.static(path.join(__dirname, "public/images")));
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/posts", postRouter);
 // Implementing Global Error Handling
-app.all("*", (req, res, next) => {
-  next(
-    new AppError(`Cannot find this ${req.originalUrl} url in the server!`, 404)
-  );
-});
+// app.all("*", (req, res, next) => {
+//   next(
+//     new AppError(`Cannot find this ${req.originalUrl} url in the server!`, 404)
+//   );
+// });
 app.use(globalErrorHandler);
 // FOR DEPLOYMENT
-app.use(express.static(path.join(__dirname, "/client/build")));
+// eslint-disable-next-line no-global-assign
+// __dirname = path.resolve();
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "/client/build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/client/build", "index.html"));
-});
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+//   });
+// } else {
+// }
 app.get("/", (req, res) => {
-  res.status(200).json("Backend is running!");
+  res.send("Backend is running!");
 });
+
 app.listen(process.env.PORT || "5000", () => {
   console.log("App is running on port 5000...");
 });
