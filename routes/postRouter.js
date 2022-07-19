@@ -7,8 +7,12 @@ router.get("/", postsController.getPosts);
 router.get("/:id", postsController.getSinglePost);
 // Protect Every Routes after this middleware
 // router.use(authController.protect);
-router.post("/", postsController.createPost);
-router.put("/:id", postsController.updatePost);
-router.delete("/:id", postsController.deletePost);
+router.post("/", postsController.uploadPostImage, postsController.createPost);
+router.put("/:id", postsController.uploadPostImage, postsController.updatePost);
+router.delete(
+  "/:id",
+  postsController.uploadPostImage,
+  postsController.deletePost
+);
 
 module.exports = router;

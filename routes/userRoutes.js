@@ -28,7 +28,7 @@ router.route("/:id").get(usersController.getUser);
 // UPDATE USER DATA
 router.route("/updateMe").patch(
   // authController.protect,
-
+  usersController.updateUserImage,
   usersController.updateMe
 );
 // DELETE USER
