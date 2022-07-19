@@ -17,7 +17,9 @@ const postSchema = new mongoose.Schema(
     photo: {
       type: String,
       required: false,
-      default: "default.jpg",
+    },
+    cloudinary_id: {
+      type: String,
     },
     categories: {
       type: Array,

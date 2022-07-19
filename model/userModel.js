@@ -46,8 +46,8 @@ const userSchema = new mongoose.Schema(
     },
     photo: {
       type: String,
-      default: "default.jpg",
     },
+    cloudinary_id: String,
     active: {
       type: Boolean,
       default: true,
