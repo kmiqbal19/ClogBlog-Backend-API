@@ -18,7 +18,7 @@ const globalErrorHandler = require("./controller/errorController");
 const userRouter = require("./routes/userRoutes");
 const postRouter = require("./routes/postRouter");
 // Create Express Application
-const app = express().use(cors());
+const app = express().use("*", cors());
 // Configure .env to process.env
 dotenv.config({ path: "./.env" });
 // // CORS
@@ -38,7 +38,8 @@ mongoose
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.log(err));
 // Body parser for json file
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "50mb", extended: false }));
+app.use(express.urlencoded({ limit: "50mb", extended: false }));
 // Limit request rate
 const limiter = rateLimiter({
   max: 1000,
@@ -72,7 +73,7 @@ if (process.env.NODE_ENV === "development") {
 // });
 
 // USING MULTER FOR IMAGE UPLOAD
-
+/*
 const storagePosts = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images/posts");
@@ -111,6 +112,7 @@ app.post("/api/v1/posts/upload", uploadPost.single("file"), (req, res) => {
 app.post("/api/v1/users/upload", uploadUser.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });
+*/
 // Serving STATIC Files
 app.use(express.static(path.join(__dirname, "public/images")));
 // MOUNTING ROUTER for different routes
